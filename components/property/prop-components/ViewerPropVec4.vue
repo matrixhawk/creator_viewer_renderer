@@ -16,17 +16,6 @@ const internalValue = reactive({
 })
 
 watch(
-    tracker,
-    (newVal) => {
-        internalValue.x = newVal.x;
-        internalValue.y = newVal.y;
-        internalValue.z = newVal.z;
-        internalValue.w = newVal.w;
-    },
-    { deep: true }
-)
-
-watch(
     internalValue,
     (newVal) => {
         if(newVal.x == tracker.value.x && newVal.y == tracker.value.y && newVal.z == tracker.value.z && newVal.w == tracker.value.w) return;

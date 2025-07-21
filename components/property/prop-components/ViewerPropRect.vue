@@ -3,10 +3,12 @@ import { ElCol, ElInputNumber, ElRow } from 'element-plus';
 import { reactive, watch } from 'vue';
 import { ClientBridge, trackersMap } from '../../../CreatorViewerMiddleware';
 
-const props = defineProps<{ modelValue: cvType.Size , uuid : string, propName : string  }>();
+const props = defineProps<{ modelValue: cvType.Rect , uuid : string, propName : string  }>();
 const tracker = trackersMap.get(props.uuid + props.propName);
 
 const internalValue = reactive({
+    x: props.modelValue.x,
+    y: props.modelValue.y,
     width: props.modelValue.width,
     height: props.modelValue.height,
 })
@@ -14,9 +16,11 @@ const internalValue = reactive({
 watch(
     () => internalValue,
     (newVal) => {
-        if(newVal.width == tracker.value.width && newVal.height == tracker.value.height) return;
+        if(newVal.width == tracker.value.width && newVal.height == tracker.value.height && newVal.x == tracker.value.x && newVal.y == tracker.value.y) return;
         tracker.value.height = newVal.height;
         tracker.value.width = newVal.width;
+        tracker.value.x = newVal.x;
+        tracker.value.y = newVal.y;
         ClientBridge.modifyTargetProp(props.uuid, props.propName, newVal);
     },
     { deep: true }
@@ -25,7 +29,28 @@ watch(
 </script>
 
 <template>
-    <ElRow :gutter="10">
+        <ElRow :gutter="10">
+        <ElCol :span="12">
+            <div class="vec-field">
+                <ElInputNumber size="small" controls-position="right" v-model="internalValue.x">
+                    <template #prefix>
+                        <span>X</span>
+                    </template>
+                </ElInputNumber>
+            </div>
+        </ElCol>
+        <ElCol :span="12">
+            <div class="vec-field">
+                <ElInputNumber size="small" controls-position="right" v-model="internalValue.y">
+                    <template #prefix>
+                        <span>Y</span>
+                    </template>
+                </ElInputNumber>
+                <!-- <CoordinateNumInput v-model="internalValue.height" color="#67a900"></CoordinateNumInput> -->
+            </div>
+        </ElCol>
+    </ElRow>
+    <ElRow :gutter="10" style="margin-top: 4px;">
         <ElCol :span="12">
             <div class="vec-field">
                 <ElInputNumber size="small" controls-position="right" v-model="internalValue.width">

@@ -2,7 +2,7 @@
     <ElCollapseItem :title="props.propData.type == 'node' ? props.propData.name : props.propData.name" :name="props.propData.uuid">
         <template #title="{ isActive }">
           <div :class="['title-wrapper', { 'is-active': isActive }]">
-            <ElCheckbox @click.stop class="test" v-model="checkboxModel" @change="onCheckChange"></ElCheckbox>
+            <ElCheckbox @click.stop v-model="checkboxModel" @change="onCheckChange"></ElCheckbox>
             {{ props.propData.type == 'node' ? `Node<${props.propData.name}>` : props.propData.name }}
             <ElIcon size="large" style="right: 5px; position: absolute; top: 13px;bottom: 3px;">
               <component :is="iconMap[props.propData.type]"></component>
@@ -32,6 +32,7 @@ import ViewerPropVec3 from './prop-components/ViewerPropVec3.vue';
 import ViewerPropVec4 from './prop-components/ViewerPropVec4.vue';
 import ViewerPropSize from './prop-components/ViewerPropSize.vue';
 import { ClientBridge, isTrackedNodeActive } from '../../CreatorViewerMiddleware';
+import ViewerPropRect from './prop-components/ViewerPropRect.vue';
 
 const props = defineProps<{propData : ICCObjectPropGroup}>();
 
@@ -102,6 +103,7 @@ function getComponent(type: cvSupportType) {
     else if(type === 'Enum') return ViewerPropEnum;
     else if(type === 'boolean') return ViewerPropBoolean;
     else if(type === 'Size') return ViewerPropSize;
+    else if(type === 'Rect') return ViewerPropRect;
 
     return ViewerPropInput;
 }

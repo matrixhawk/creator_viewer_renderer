@@ -4,7 +4,7 @@ import { ref, watch } from 'vue';
 import { ClientBridge } from '../../../CreatorViewerMiddleware';
 
 
-const props = defineProps<{ modelValue: string, uuid: string, propName: string }>();
+const props = defineProps<{ modelValue: cvType.Color, uuid: string, propName: string }>();
 
 function parseColorString(color: string) {
     const rgbaMatch = color.match(/^rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)$/)

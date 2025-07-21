@@ -14,15 +14,6 @@ const internalValue = reactive({
 })
 
 watch(
-    tracker,
-    (newVal) => {
-        internalValue.x = newVal.x;
-        internalValue.y = newVal.y;
-    },
-    { deep: true }
-)
-
-watch(
     internalValue,
     (newVal) => {
         console.log(`on ${props.uuid}  ${props.propName}  vec2 changed `, newVal);
