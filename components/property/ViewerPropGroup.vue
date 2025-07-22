@@ -34,6 +34,7 @@ import ViewerPropSize from './prop-components/ViewerPropSize.vue';
 import { ClientBridge, isTrackedNodeActive } from '../../CreatorViewerMiddleware';
 import ViewerPropRect from './prop-components/ViewerPropRect.vue';
 import ViewerPropAsset from './prop-components/ViewerPropAsset.vue';
+import ViewerPropNode from './prop-components/ViewerPropNode.vue';
 
 const props = defineProps<{propData : ICCObjectPropGroup}>();
 
@@ -106,6 +107,7 @@ function getComponent(type: cvSupportType) {
     else if(type === 'Size') return ViewerPropSize;
     else if(type === 'Rect') return ViewerPropRect;
     else if(type === 'Asset') return ViewerPropAsset;
+    else if(type === 'Node') return ViewerPropNode;
 
     return ViewerPropInput;
 }

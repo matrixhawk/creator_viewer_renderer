@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { ElCol, ElInputNumber, ElRow } from 'element-plus';
-import { reactive, watch } from 'vue';
+import { reactive, Ref, watch } from 'vue';
 import { ClientBridge, trackersMap } from '../../../CreatorViewerMiddleware';
 
 const props = defineProps<{ modelValue: cvType.Rect , uuid : string, propName : string  }>();
-const tracker = trackersMap.get(props.uuid + props.propName);
+const tracker = trackersMap.get(props.uuid + props.propName) as Ref<cvType.Rect>;
+
+watch(tracker,()=>{
+    internalValue.x = tracker.value.x;
+    internalValue.y = tracker.value.y;
+    internalValue.width = tracker.value.width;
+    internalValue.height = tracker.value.height;
+})
 
 const internalValue = reactive({
     x: props.modelValue.x,
