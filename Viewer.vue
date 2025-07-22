@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Filter } from '@element-plus/icons-vue';
 import { ElButton, ElCheckbox, ElInput, ElSplitter, ElSplitterPanel, ElText, ElTree, FilterNodeMethodFunction } from 'element-plus';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import ViewerPropCollapse from './components/property/ViewerPropCollapse.vue';
 import { ClientBridge, nodeTreeData, refreshNodeActiveStatus, trackPropGroupDatas, treeRef, viewerChannel } from './CreatorViewerMiddleware';
+import { eventBus } from './EventBus';
 
 const expandNodes = ref<string[]>([]);
 
@@ -13,6 +14,12 @@ onMounted(async () => {
     if (success) {
         listeningPort.value = `已经开启监听端口${port}`;
     }
+
+    eventBus.on('highlight-node', handleHighlight);
+})
+
+onBeforeUnmount(() => {
+  eventBus.off('highlight-node', handleHighlight);
 })
 
 const handleNodeClick = (data) => {
@@ -85,6 +92,42 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: Tree) => {
 const defaultProps = {
     children: 'children',
     label: 'name',
+    class : getRowClass
+}
+
+const highlightTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+function handleHighlight(nodeId: string) {
+    flashHighlight(nodeId);
+}
+
+function flashHighlight(nodeId: string, duration = 600) {
+  const node = treeRef.value.getNode(nodeId);
+  if (!node) return
+    console.log(`flashHighlight ${nodeId} `);
+  const data = node.data
+  data.highlight = true
+  treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
+
+  // 如果之前有高亮定时器，先清除
+  if (highlightTimers.has(nodeId)) {
+    clearTimeout(highlightTimers.get(nodeId))
+  }
+
+  // 设置新的定时器
+  const timer = setTimeout(() => {
+    data.highlight = false
+    treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
+    highlightTimers.delete(nodeId)
+  }, duration)
+
+  highlightTimers.set(nodeId, timer)
+}
+
+// 用来设置每行的class
+function getRowClass(data: any) {
+    console.log(`get class ?` , data.highlight);
+  return data.highlight ? 'highlight-row' : ''
 }
 
 // 暂定类型 Vec3 Vec4 Vec2 Color Number String Enum
@@ -107,7 +150,7 @@ const defaultProps = {
                     :auto-expand-parent="false" :draggable="true" node-key="uuid" @node-click="handleNodeClick"
                     :allow-drop="allowDropCheck" :allowDrag="allowDragCheck" @node-expand="onHandleNodeExpand"
                     @node-collapse="onHandleNodeCollapse" @node-drop="onHandleNodeDrop"
-                    :default-expanded-keys="expandNodes" :filter-node-method="filterNode" empty-text="等待Creator客户端连接">
+                    :default-expanded-keys="expandNodes" :filter-node-method="filterNode" empty-text="等待Creator客户端连接" >
 
                     <template #default="{ node, data }">
                         <ElCheckbox v-model="data.active" @click.stop @change="onHandleNodeCheckedChange($event, data)"
@@ -149,5 +192,14 @@ const defaultProps = {
     --el-checkbox-checked-bg-color: #888888;
     /* 灰色 */
     --el-checkbox-checked-input-border-color: #888888;
+}
+
+.el-tree-node__content {
+  transition: background-color 0.4s;
+}
+
+.highlight-row > .el-tree-node__content {
+  background-color: #ff9d34ae;
+  transition: background-color 0.2s;
 }
 </style>
