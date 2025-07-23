@@ -37,7 +37,7 @@ function onClickItem() {
 <template>
     <div style="display: flex; align-items: center;">
         <IconCode size="18"></IconCode>
-        <ElButton style="width: 100%;justify-content:left" text bg size="small" v-on:click="onClickItem"
+        <ElButton style="width: 100%;justify-content:left;margin-left: 5px;border: 1px solid var(--el-border-color);" text bg size="small" v-on:click="onClickItem"
             :disabled="!internalValue.isValid" :icon="internalValue.isValid ? IconLink : IconUnlink">
             {{ internalValue.isValid ? `${internalValue.nodeName}.${internalValue.componentName}` : "null" }}</ElButton>
     </div>
