@@ -4,6 +4,7 @@
           <div :class="['title-wrapper', { 'is-active': isActive }]">
             <ElCheckbox @click.stop v-model="checkboxModel" @change="onCheckChange"></ElCheckbox>
             {{ props.propData.type == 'node' ? `Node<${props.propData.name}>` : props.propData.name }}
+            <ElButton @click.stop @click="onClickPrintTarget()">PrintTarget</ElButton>
             <ElIcon size="large" style="right: 5px; position: absolute; top: 13px;bottom: 3px;">
               <component :is="iconMap[props.propData.type]"></component>
             </ElIcon>
@@ -19,7 +20,7 @@
 
 <script setup lang="ts">
 import { Document, Menu } from '@element-plus/icons-vue';
-import { ElCheckbox, ElCollapseItem, ElIcon } from 'element-plus';
+import { ElButton, ElCheckbox, ElCollapseItem, ElIcon } from 'element-plus';
 import { computed, inject, provide, ref } from 'vue';
 import ViewerPropBase from './prop-components/ViewerPropBase.vue';
 import ViewerPropBoolean from './prop-components/ViewerPropBoolean.vue';
@@ -66,6 +67,10 @@ function onCheckChange(value : boolean) {
             }
         }
     }
+}
+
+function onClickPrintTarget() {
+  ClientBridge.printTargetByUuid(props.propData.uuid);
 }
 
 isChecked.value = false;

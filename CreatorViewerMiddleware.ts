@@ -2,6 +2,7 @@
 import { ViewerChannel } from "../ViewerChannel";
 import { ElTree } from "element-plus";
 import { nextTick, Ref, ref } from "vue";
+import { eventBus } from "./EventBus";
 
 export const treeRef = ref<InstanceType<typeof ElTree>>();
 export const propCollapseActiveNames = ref<string[]>([]);
@@ -135,6 +136,10 @@ export class ClientBridge {
     static modifyTargetProp(targetUuid: string, propName: string, newValue: any) {
         viewerChannel.send({ type: 'on_tracker_prop_change', data: { targetUuid, propName, value: newValue } })
     }
+
+    static printTargetByUuid(targetUuid: string) {
+        viewerChannel.send({ type: 'print_target_by_uuid', data: { targetUuid : targetUuid } })
+    }
 }
 
 type MessageHandler = () => void
@@ -198,6 +203,9 @@ function messageHandler(messageData : C2S_CreatorViewerMessage) {
             onTrackedPropChanged(messageData.data.targetUuid, messageData.data.propName, messageData.data.newValue);
         }
         break;
+        case "on_node_selected_by_viewer": {
+            eventBus.emit('select-node', messageData.data.targetUuid);
+        }
     }
 }
 

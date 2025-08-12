@@ -16,10 +16,12 @@ onMounted(async () => {
     }
 
     eventBus.on('highlight-node', handleHighlight);
+    eventBus.on('select-node', handleSelectNode);
 })
 
 onBeforeUnmount(() => {
   eventBus.off('highlight-node', handleHighlight);
+  eventBus.off('select-node', handleSelectNode);
 })
 
 const handleNodeClick = (data) => {
@@ -99,6 +101,13 @@ const highlightTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 function handleHighlight(nodeId: string) {
     flashHighlight(nodeId);
+}
+
+function handleSelectNode(nodeId: string) {
+    flashHighlight(nodeId);
+    treeRef.value.getNode(nodeId)?.expand(null, true);
+    treeRef.value.setCurrentKey(nodeId);
+    ClientBridge.selectNode(nodeId);
 }
 
 function flashHighlight(nodeId: string, duration = 600) {
