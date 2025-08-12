@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ElInput } from 'element-plus';
+import { ElIcon, ElInput, ElText } from 'element-plus';
 import { onMounted } from 'vue';
 import { ClientBridge } from '../../../CreatorViewerMiddleware';
+import IconPackage from '../custom-icons/icon-package.vue';
+import IconPicture from '../custom-icons/icon-picture.vue';
 
 
 const props = defineProps<{ modelValue: IAssetTypeData, uuid: string, propName: string }>();
@@ -9,15 +11,19 @@ onMounted(() => {
     // console.log(props);
 });
 
-function onInput(value: string) {
-    ClientBridge.modifyTargetProp(props.uuid, props.propName, value);
+function getTypeIcon(value: string) {
+    if(value == "cc.SpriteFrame") {
+        return IconPicture;
+    }
+    return IconPackage
 }
+
+
 
 </script>
 
 <template>
-    <ElInput size="default" :autosize="{ minRows: 1, maxRows: 3 }" type="textarea" v-model="modelValue.assetName"
-        @input="onInput" disabled></ElInput>
+    <ElText style="align-items: center;"><component :size="26" :is="getTypeIcon(props.modelValue.className)"> </component>{{  props.modelValue.assetName }}</ElText>
 </template>
 
 <style lang="css"></style>

@@ -2,7 +2,7 @@
     <ElCollapseItem :title="props.propData.type == 'node' ? props.propData.name : props.propData.name" :name="props.propData.uuid">
         <template #title="{ isActive }">
           <div :class="['title-wrapper', { 'is-active': isActive }]">
-            <ElCheckbox @click.stop v-model="checkboxModel" @change="onCheckChange"></ElCheckbox>
+            <ElCheckbox class="node-checkbox" @click.stop v-model="checkboxModel" @change="onCheckChange"></ElCheckbox>
             {{ props.propData.type == 'node' ? `Node<${props.propData.name}>` : props.propData.name }}
             <ElButton @click.stop @click="onClickPrintTarget()">PrintTarget</ElButton>
             <ElIcon size="large" style="right: 5px; position: absolute; top: 13px;bottom: 3px;">
@@ -36,6 +36,9 @@ import { ClientBridge, isTrackedNodeActive } from '../../CreatorViewerMiddleware
 import ViewerPropRect from './prop-components/ViewerPropRect.vue';
 import ViewerPropAsset from './prop-components/ViewerPropAsset.vue';
 import ViewerPropNode from './prop-components/ViewerPropNode.vue';
+import ViewerPropComponent from './prop-components/ViewerPropComponent.vue';
+import Package from './custom-icons/icon-package.vue';
+import IconCode from './custom-icons/icon-code.vue';
 
 const props = defineProps<{propData : ICCObjectPropGroup}>();
 
@@ -96,8 +99,8 @@ provide('propNameWidth', propNameWidth);
 provide('propResizing', propResizing);
 
 const iconMap : Record<string, any> = {
-  "node": Menu,
-  "component": Document,
+  "node": Package,
+  "component": IconCode,
 }
 
 function getComponent(type: cvSupportType) {
@@ -113,6 +116,7 @@ function getComponent(type: cvSupportType) {
     else if(type === 'Rect') return ViewerPropRect;
     else if(type === 'Asset') return ViewerPropAsset;
     else if(type === 'Node') return ViewerPropNode;
+    else if(type === 'Component') return ViewerPropComponent;
 
     return ViewerPropInput;
 }
@@ -138,9 +142,7 @@ function getComponent(type: cvSupportType) {
     flex: 1;
 }
 
-.test{
-    .el-checkbox__inner {
+.node-checkbox > .el-checkbox__inner {
     border-color: rgb(121, 121, 121) !important;
-}
 }
 </style>

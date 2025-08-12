@@ -118,6 +118,13 @@ function flashHighlight(nodeId: string, duration = 600) {
   data.highlight = true
   treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
 
+  const nodeDom = treeRef.value.$el.querySelector(`.el-tree-node[data-key="${nodeId}"]`) as HTMLElement;
+  if(nodeDom) {
+    nodeDom.scrollIntoView({ behavior: 'auto', block: 'center' })
+  }
+
+  
+
   // 如果之前有高亮定时器，先清除
   if (highlightTimers.has(nodeId)) {
     clearTimeout(highlightTimers.get(nodeId))
