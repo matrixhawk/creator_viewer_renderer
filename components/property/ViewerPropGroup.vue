@@ -4,8 +4,7 @@
           <div :class="['title-wrapper', { 'is-active': isActive }]">
             <ElCheckbox class="node-checkbox" @click.stop v-model="checkboxModel" @change="onCheckChange"></ElCheckbox>
             {{ props.propData.type == 'node' ? `Node<${props.propData.name}>` : props.propData.name }}
-            <ElButton @click.stop @click="onClickPrintTarget()">PrintTarget</ElButton>
-            <ElIcon size="large" style="right: 5px; position: absolute; top: 13px;bottom: 3px;">
+            <ElIcon @click.stop @click="onClickPrintTarget()" size="large" style="right: 5px; position: absolute; top: 13px;bottom: 3px;">
               <component :is="iconMap[props.propData.type]"></component>
             </ElIcon>
           </div>

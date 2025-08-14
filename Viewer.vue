@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { Filter } from '@element-plus/icons-vue';
 import { ElButton, ElCheckbox, ElInput, ElSplitter, ElSplitterPanel, ElText, ElTree, FilterNodeMethodFunction } from 'element-plus';
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { h, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import ViewerPropCollapse from './components/property/ViewerPropCollapse.vue';
 import { ClientBridge, nodeTreeData, refreshNodeActiveStatus, trackPropGroupDatas, treeRef, viewerChannel } from './CreatorViewerMiddleware';
 import { eventBus } from './EventBus';
+import NodeCanvas from './components/property/custom-icons/tree_nodes/node-type-icon-canvas.vue';
+import NodeImage from './components/property/custom-icons/tree_nodes/node-type-icon-image.vue';
+import NodeTypeIconImage from './components/property/custom-icons/tree_nodes/node-type-icon-image.vue';
+import NodeTypeIconCanvas from './components/property/custom-icons/tree_nodes/node-type-icon-canvas.vue';
+import NodeTypeIconCamera from './components/property/custom-icons/tree_nodes/node-type-icon-camera.vue';
+import NodeTypeIconScene from './components/property/custom-icons/tree_nodes/node-type-icon-scene.vue';
+import NodeTypeIconNode from './components/property/custom-icons/tree_nodes/node-type-icon-node.vue';
+import NodeTypeIconLabel from './components/property/custom-icons/tree_nodes/node-type-icon-label.vue';
+import NodeTypeIconEditBox from './components/property/custom-icons/tree_nodes/node-type-icon-edit-box.vue';
 
 const expandNodes = ref<string[]>([]);
 
@@ -20,8 +29,8 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  eventBus.off('highlight-node', handleHighlight);
-  eventBus.off('select-node', handleSelectNode);
+    eventBus.off('highlight-node', handleHighlight);
+    eventBus.off('select-node', handleSelectNode);
 })
 
 const handleNodeClick = (data) => {
@@ -67,12 +76,23 @@ function onHandleNodeDrop(drapNode) {
     })
 }
 
+const expandAll = ref(false);
 function onClickExpandAll() {
-    expandNodes.value.length = 0;
-    treeRef.value?.store._getAllNodes().forEach((node) => {
-        if (!expandNodes.value.includes(node.data.uuid)) expandNodes.value.push(node.data.uuid);
-        node.expand();
-    })
+    if (!expandAll.value) {
+        expandNodes.value.length = 0;
+        treeRef.value?.store._getAllNodes().forEach((node) => {
+            if (!expandNodes.value.includes(node.data.uuid)) expandNodes.value.push(node.data.uuid);
+            node.expand();
+        })
+    }
+    else {
+        expandNodes.value.length = 0;
+        treeRef.value?.store._getAllNodes().forEach((node) => {
+            node.collapse();
+        })
+    }
+
+    expandAll.value = !expandAll.value;
 }
 
 interface Tree {
@@ -94,7 +114,7 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: Tree) => {
 const defaultProps = {
     children: 'children',
     label: 'name',
-    class : getRowClass
+    class: getRowClass
 }
 
 const highlightTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -111,41 +131,58 @@ function handleSelectNode(nodeId: string) {
 }
 
 function flashHighlight(nodeId: string, duration = 600) {
-  const node = treeRef.value.getNode(nodeId);
-  if (!node) return
+    const node = treeRef.value.getNode(nodeId);
+    if (!node) return
     console.log(`flashHighlight ${nodeId} `);
-  const data = node.data
-  data.highlight = true
-  treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
-
-  const nodeDom = treeRef.value.$el.querySelector(`.el-tree-node[data-key="${nodeId}"]`) as HTMLElement;
-  if(nodeDom) {
-    nodeDom.scrollIntoView({ behavior: 'auto', block: 'center' })
-  }
-
-  
-
-  // 如果之前有高亮定时器，先清除
-  if (highlightTimers.has(nodeId)) {
-    clearTimeout(highlightTimers.get(nodeId))
-  }
-
-  // 设置新的定时器
-  const timer = setTimeout(() => {
-    data.highlight = false
+    const data = node.data
+    data.highlight = true
     treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
-    highlightTimers.delete(nodeId)
-  }, duration)
 
-  highlightTimers.set(nodeId, timer)
+    const nodeDom = treeRef.value.$el.querySelector(`.el-tree-node[data-key="${nodeId}"]`) as HTMLElement;
+    if (nodeDom) {
+        nodeDom.scrollIntoView({ behavior: 'auto', block: 'center' })
+    }
+
+    // 如果之前有高亮定时器，先清除
+    if (highlightTimers.has(nodeId)) {
+        clearTimeout(highlightTimers.get(nodeId))
+    }
+
+    // 设置新的定时器
+    const timer = setTimeout(() => {
+        data.highlight = false
+        treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
+        highlightTimers.delete(nodeId)
+    }, duration)
+
+    highlightTimers.set(nodeId, timer)
 }
 
 // 用来设置每行的class
 function getRowClass(data: any) {
-    console.log(`get class ?` , data.highlight);
-  return data.highlight ? 'highlight-row' : ''
+    return data.highlight ? 'highlight-row' : ''
 }
 
+
+function getIconByNodeType(type : NodeType) {
+    console.log(type);
+    switch(type) {
+        case 'node': return h(NodeTypeIconNode, { size:16, color:"#f0ad4e" }) ;
+        case 'canvas': return h(NodeTypeIconCanvas, { size:16, color:"#34d399" }) ;
+        case 'camera': return h(NodeTypeIconCamera, { size:16, color:"#f0ad4e" });
+        case 'sprite': return h(NodeTypeIconImage, { size:16, color:"#f286c4" });
+        case 'particle2D':
+        case 'skeleton2D':
+        case 'edit_box': return h(NodeTypeIconEditBox, { size:18, color:"#55c4f1" }) ;
+        case 'label': return h(NodeTypeIconLabel, { size:18, color:"#55c4f1" }) ;
+        case 'button':
+        case 'graphics':
+        case 'scene': return h(NodeTypeIconScene, { size:16, color:"#f0ad4e" }) ;
+        case 'scroll_view':
+    }
+
+    return h(NodeTypeIconImage, { size:16, color:"#f286c4" });
+}
 // 暂定类型 Vec3 Vec4 Vec2 Color Number String Enum
 
 </script>
@@ -153,11 +190,15 @@ function getRowClass(data: any) {
 <template style="height: 100%;">
     <div
         style="height: 100%; box-shadow: var(--el-border-color-light) 0px 0px 10px;display: flex; flex-direction: column;">
-        <div style="display: flex; flex-direction: row;">
+        <div style="display: flex; flex-direction: row;padding:10px;column-gap: 5px;">
             <ElText>{{ listeningPort }}</ElText>
-            <ElButton @click="onClickExpandAll">展开所有</ElButton>
+            <ElButton @click="onClickExpandAll">{{ expandAll ? "展开" : "收起" }}</ElButton>
         </div>
-        <ElInput :prefix-icon="Filter" v-model="filterText" class="w-60 mb-2" placeholder="输入节点名称" />
+        <div style="display: flex; flex-direction: row;padding-left: 10px; padding-right: 10px;column-gap: 5px;">
+            <ElInput :prefix-icon="Filter" v-model="filterText" placeholder="输入节点名称" />
+            <ElButton>展开</ElButton>
+        </div>
+        
         <ElSplitter layout="vertical">
             <ElSplitterPanel>
                 <ElTree ref="treeRef" style="width: 100%;" :data="nodeTreeData" :props="defaultProps"
@@ -166,11 +207,13 @@ function getRowClass(data: any) {
                     :auto-expand-parent="false" :draggable="true" node-key="uuid" @node-click="handleNodeClick"
                     :allow-drop="allowDropCheck" :allowDrag="allowDragCheck" @node-expand="onHandleNodeExpand"
                     @node-collapse="onHandleNodeCollapse" @node-drop="onHandleNodeDrop"
-                    :default-expanded-keys="expandNodes" :filter-node-method="filterNode" empty-text="等待Creator客户端连接" >
+                    :default-expanded-keys="expandNodes" :filter-node-method="filterNode" empty-text="等待Creator客户端连接"
+                    :expand-on-click-node="false">
 
                     <template #default="{ node, data }">
-                        <ElCheckbox v-model="data.active" @click.stop @change="onHandleNodeCheckedChange($event, data)"
-                            :class="data.activeInHierarchy ? 'checkbox-active' : 'checkbox-inactive'" />
+                        <component :is="getIconByNodeType(data.type)" style="margin-right: 5px;"/>
+                        <!-- <ElCheckbox v-model="data.active" @click.stop @change="onHandleNodeCheckedChange($event, data)"
+                            :class="data.activeInHierarchy ? 'checkbox-active' : 'checkbox-inactive'" /> -->
                         <span :style="{ color: !data.activeInHierarchy ? 'gray' : 'white' }">
                             {{ node.label }}
                         </span>
@@ -199,9 +242,9 @@ function getRowClass(data: any) {
 }
 
 .checkbox-active {
-    --el-checkbox-checked-bg-color: #409EFF;
+    --el-checkbox-checked-bg-color: #8c9dad;
     /* 蓝色 */
-    --el-checkbox-checked-input-border-color: #409EFF;
+    --el-checkbox-checked-input-border-color: #8c939b;
 }
 
 .checkbox-inactive {
@@ -211,11 +254,13 @@ function getRowClass(data: any) {
 }
 
 .el-tree-node__content {
-  transition: background-color 0.4s;
+    transition: background-color 0.4s;
+    --el-tree-node-content-height : 20px;
+    font-size: 13px;
 }
 
-.highlight-row > .el-tree-node__content {
-  background-color: #ff9d34ae;
-  transition: background-color 0.2s;
+.highlight-row>.el-tree-node__content {
+    background-color: #ff9d34ae;
+    transition: background-color 0.2s;
 }
 </style>
