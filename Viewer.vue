@@ -14,6 +14,9 @@ import NodeTypeIconScene from './components/property/custom-icons/tree_nodes/nod
 import NodeTypeIconNode from './components/property/custom-icons/tree_nodes/node-type-icon-node.vue';
 import NodeTypeIconLabel from './components/property/custom-icons/tree_nodes/node-type-icon-label.vue';
 import NodeTypeIconEditBox from './components/property/custom-icons/tree_nodes/node-type-icon-edit-box.vue';
+import NodeTypeIconToggle from './components/property/custom-icons/tree_nodes/node-type-icon-toggle.vue';
+import NodeTypeIconToggleGroup from './components/property/custom-icons/tree_nodes/node-type-icon-toggle-group.vue';
+import NodeTypeIconMask from './components/property/custom-icons/tree_nodes/node-type-icon-mask.vue';
 
 const expandNodes = ref<string[]>([]);
 
@@ -175,6 +178,9 @@ function getIconByNodeType(type : NodeType) {
         case 'skeleton2D':
         case 'edit_box': return h(NodeTypeIconEditBox, { size:18, color:"#55c4f1" }) ;
         case 'label': return h(NodeTypeIconLabel, { size:18, color:"#55c4f1" }) ;
+        case 'toggle': return h(NodeTypeIconToggle, { size:18, color:"#55c4f1" }) ;
+        case 'toggle_group': return h(NodeTypeIconToggleGroup, { size:20, color:"#55c4f1" }) ;
+        case 'mask' : return h(NodeTypeIconMask, { size:20, color:"#55c4f1" }) ;
         case 'button':
         case 'graphics':
         case 'scene': return h(NodeTypeIconScene, { size:16, color:"#f0ad4e" }) ;
