@@ -1,13 +1,14 @@
 <template>
-    <svg :fill="computedColor" :stroke="computedColor" :style="{ width: computedSize, height: computedSize }" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path :d="svgPath"/></svg>
+  <svg :fill="computedColor" :style="{ width: computedSize, height: computedSize }"
+    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path :d="svgPath" />
+  </svg>
 </template>
 <script setup lang="ts">
 import { computed } from 'vue';
 const props = defineProps<{
   size?: number | string;  // 可传 16 / '1em' / '24px'
-  color ?: string;
-  stroke ?: boolean;
-  fill ?: boolean;
+  color?: string;
 }>()
 
 const computedSize = computed(() => {
@@ -18,12 +19,7 @@ const computedColor = computed(() => {
   return props.color || '#000000FF'
 })
 
-const svgPath = "M15.4142 4.99998H21.0082C21.556 4.99998 22 5.44461 22 6.00085V19.9991C22 20.5519 21.5447 21 21.0082 21H2.9918C2.44405 21 2 20.5553 2 19.9991V6.00085C2 5.44808 2.45531 4.99998 2.9918 4.99998H8.58579L6.05025 2.46445L7.46447 1.05023L11.4142 4.99998H12.5858L16.5355 1.05023L17.9497 2.46445L15.4142 4.99998ZM4 6.99998V19H20V6.99998H4Z";
+const svgPath = "M21 1V13C21 17.9706 16.9706 22 12 22C7.02944 22 3 17.9706 3 13C3 9.72064 4.75393 6.85093 7.37488 5.27777L14 1.453V4.223L21 1ZM19 4.122L12 7.34567V4.916L8.59717 6.88088C6.47212 8.06588 5.10056 10.2673 5.00531 12.7258L5 13C5 16.866 8.13401 20 12 20C15.7855 20 18.8691 16.9952 18.9959 13.2407L19 13V4.122ZM12 8C14.7614 8 17 10.2386 17 13C17 15.7614 14.7614 18 12 18C9.23858 18 7 15.7614 7 13C7 10.2386 9.23858 8 12 8ZM12 10C10.3431 10 9 11.3431 9 13C9 14.6569 10.3431 16 12 16C13.6569 16 15 14.6569 15 13C15 11.3431 13.6569 10 12 10Z";
 </script>
 
-<style>
-
-.el-icon {
-  fill: calc(computedColor);
-}
-</style>
+<style></style>

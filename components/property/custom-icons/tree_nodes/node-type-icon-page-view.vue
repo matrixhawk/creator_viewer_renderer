@@ -4,12 +4,12 @@
     <path :d="svgPath" />
   </svg>
 </template>
-
 <script setup lang="ts">
 import { computed } from 'vue';
+
 const props = defineProps<{
   size?: number | string;  // 可传 16 / '1em' / '24px'
-  color?: string;
+  color?: string
 }>()
 
 const computedSize = computed(() => {
@@ -20,7 +20,7 @@ const computedColor = computed(() => {
   return props.color || '#000000FF'
 })
 
-const svgPath = "M16.7574 2.99678L14.7574 4.99678H5V18.9968H19V9.23943L21 7.23943V19.9968C21 20.5491 20.5523 20.9968 20 20.9968H4C3.44772 20.9968 3 20.5491 3 19.9968V3.99678C3 3.4445 3.44772 2.99678 4 2.99678H16.7574ZM20.4853 2.09729L21.8995 3.5115L12.7071 12.7039L11.2954 12.7064L11.2929 11.2897L20.4853 2.09729Z";
+const svgPath = 'M4 3H1V5H3V19H1V21H4C4.55228 21 5 20.5523 5 20V4C5 3.44772 4.55228 3 4 3ZM7 4C7 3.44772 7.44772 3 8 3H16C16.5523 3 17 3.44772 17 4V20C17 20.5523 16.5523 21 16 21H8C7.44772 21 7 20.5523 7 20V4ZM9 5V19H15V5H9ZM19 4C19 3.44772 19.4477 3 20 3H23V5H21V19H23V21H20C19.4477 21 19 20.5523 19 20V4Z';
 </script>
 
 <style></style>

@@ -1,15 +1,15 @@
 <template>
   <svg :fill="computedColor" :style="{ width: computedSize, height: computedSize }" viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg">
-    <path :d="svgPath" />
+<path :d="svgPath" />
   </svg>
 </template>
-
 <script setup lang="ts">
 import { computed } from 'vue';
+
 const props = defineProps<{
   size?: number | string;  // 可传 16 / '1em' / '24px'
-  color?: string;
+  color?: string
 }>()
 
 const computedSize = computed(() => {
@@ -20,7 +20,7 @@ const computedColor = computed(() => {
   return props.color || '#000000FF'
 })
 
-const svgPath = "M16.7574 2.99678L14.7574 4.99678H5V18.9968H19V9.23943L21 7.23943V19.9968C21 20.5491 20.5523 20.9968 20 20.9968H4C3.44772 20.9968 3 20.5491 3 19.9968V3.99678C3 3.4445 3.44772 2.99678 4 2.99678H16.7574ZM20.4853 2.09729L21.8995 3.5115L12.7071 12.7039L11.2954 12.7064L11.2929 11.2897L20.4853 2.09729Z";
+const svgPath = 'M2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12ZM20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12ZM18 12C18 13.6569 17.3284 15.1569 16.2426 16.2426L12 12V6C15.3137 6 18 8.68629 18 12Z';
 </script>
 
 <style></style>
