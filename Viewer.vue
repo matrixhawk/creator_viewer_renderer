@@ -1,37 +1,36 @@
 <script setup lang="ts">
 import { Filter } from '@element-plus/icons-vue';
-import { ElButton, ElCheckbox, ElContainer, ElFooter, ElHeader, ElInput, ElMain, ElSplitter, ElSplitterPanel, ElText, ElTree, FilterNodeMethodFunction } from 'element-plus';
+import { ElButton, ElContainer, ElFooter, ElHeader, ElInput, ElMain, ElSplitter, ElSplitterPanel, ElText, ElTree, FilterNodeMethodFunction } from 'element-plus';
 import { h, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import ViewerPropCollapse from './components/property/ViewerPropCollapse.vue';
-import { ClientBridge, nodeTreeData, refreshNodeActiveStatus, trackPropGroupDatas, treeRef, viewerChannel } from './CreatorViewerMiddleware';
-import { eventBus } from './EventBus';
-import NodeCanvas from './components/property/custom-icons/tree_nodes/node-type-icon-canvas.vue';
-import NodeImage from './components/property/custom-icons/tree_nodes/node-type-icon-image.vue';
-import NodeTypeIconImage from './components/property/custom-icons/tree_nodes/node-type-icon-image.vue';
-import NodeTypeIconCanvas from './components/property/custom-icons/tree_nodes/node-type-icon-canvas.vue';
+import NodeTypeIconButton from './components/property/custom-icons/tree_nodes/node-type-icon-button.vue';
 import NodeTypeIconCamera from './components/property/custom-icons/tree_nodes/node-type-icon-camera.vue';
-import NodeTypeIconScene from './components/property/custom-icons/tree_nodes/node-type-icon-scene.vue';
-import NodeTypeIconNode from './components/property/custom-icons/tree_nodes/node-type-icon-node.vue';
-import NodeTypeIconLabel from './components/property/custom-icons/tree_nodes/node-type-icon-label.vue';
+import NodeTypeIconCanvas from './components/property/custom-icons/tree_nodes/node-type-icon-canvas.vue';
 import NodeTypeIconEditBox from './components/property/custom-icons/tree_nodes/node-type-icon-edit-box.vue';
-import NodeTypeIconToggle from './components/property/custom-icons/tree_nodes/node-type-icon-toggle.vue';
-import NodeTypeIconToggleGroup from './components/property/custom-icons/tree_nodes/node-type-icon-toggle-group.vue';
-import NodeTypeIconMask from './components/property/custom-icons/tree_nodes/node-type-icon-mask.vue';
-import NodeTypeIconSkeleton2D from './components/property/custom-icons/tree_nodes/node-type-icon-skeleton2D.vue';
-import NodeTypeIconTransform from './components/property/custom-icons/tree_nodes/node-type-icon-transform.vue';
+import NodeTypeIconGraphics from './components/property/custom-icons/tree_nodes/node-type-icon-graphics.vue';
+import NodeTypeIconImage from './components/property/custom-icons/tree_nodes/node-type-icon-image.vue';
+import NodeTypeIconLabel from './components/property/custom-icons/tree_nodes/node-type-icon-label.vue';
 import NodeTypeIconLayout from './components/property/custom-icons/tree_nodes/node-type-icon-layout.vue';
-import NodeTypeIconTiledmap from './components/property/custom-icons/tree_nodes/node-type-icon-tiledmap.vue';
+import NodeTypeIconMask from './components/property/custom-icons/tree_nodes/node-type-icon-mask.vue';
+import NodeTypeIconNode from './components/property/custom-icons/tree_nodes/node-type-icon-node.vue';
 import NodeTypeIconPageView from './components/property/custom-icons/tree_nodes/node-type-icon-page-view.vue';
+import NodeTypeIconParticle from './components/property/custom-icons/tree_nodes/node-type-icon-particle.vue';
+import NodeTypeIconProgress from './components/property/custom-icons/tree_nodes/node-type-icon-progress.vue';
+import NodeTypeIconRichEdit from './components/property/custom-icons/tree_nodes/node-type-icon-rich-edit.vue';
+import NodeTypeIconScene from './components/property/custom-icons/tree_nodes/node-type-icon-scene.vue';
 import NodeTypeIconScrollView from './components/property/custom-icons/tree_nodes/node-type-icon-scroll-view.vue';
+import NodeTypeIconSkeleton2D from './components/property/custom-icons/tree_nodes/node-type-icon-skeleton2D.vue';
+import NodeTypeIconSlider from './components/property/custom-icons/tree_nodes/node-type-icon-slider.vue';
+import NodeTypeIconTiledmap from './components/property/custom-icons/tree_nodes/node-type-icon-tiledmap.vue';
+import NodeTypeIconToggleGroup from './components/property/custom-icons/tree_nodes/node-type-icon-toggle-group.vue';
+import NodeTypeIconToggle from './components/property/custom-icons/tree_nodes/node-type-icon-toggle.vue';
+import NodeTypeIconTransform from './components/property/custom-icons/tree_nodes/node-type-icon-transform.vue';
 import NodeTypeIconVideoPlayer from './components/property/custom-icons/tree_nodes/node-type-icon-video-player.vue';
 import NodeTypeIconWebView from './components/property/custom-icons/tree_nodes/node-type-icon-web-view.vue';
-import NodeTypeIconParticle from './components/property/custom-icons/tree_nodes/node-type-icon-particle.vue';
-import NodeTypeIconGraphics from './components/property/custom-icons/tree_nodes/node-type-icon-graphics.vue';
-import NodeTypeIconRichEdit from './components/property/custom-icons/tree_nodes/node-type-icon-rich-edit.vue';
-import NodeTypeIconButton from './components/property/custom-icons/tree_nodes/node-type-icon-button.vue';
 import NodeTypeIconWidget from './components/property/custom-icons/tree_nodes/node-type-icon-widget.vue';
-import NodeTypeIconSlider from './components/property/custom-icons/tree_nodes/node-type-icon-slider.vue';
-import NodeTypeIconProgress from './components/property/custom-icons/tree_nodes/node-type-icon-progress.vue';
+import { ClientBridge, nodeTreeData, refreshNodeActiveStatus, trackPropGroupDatas, treeRef, viewerChannel } from './CreatorViewerMiddleware';
+import { eventBus } from './EventBus';
+import TestTree from './TestTree.vue';
+import ViewerPropCollapse from './components/property/ViewerPropCollapse.vue';
 
 const expandNodes = ref<string[]>([]);
 
@@ -52,8 +51,8 @@ onBeforeUnmount(() => {
 })
 
 const handleNodeClick = (data) => {
-    console.log(data);
-    console.log(treeRef.value.getNode(data.uuid))
+    // console.log(data);
+    // console.log(treeRef.value.getNode(data.uuid))
     ClientBridge.selectNode(data.uuid);
 }
 
@@ -183,7 +182,6 @@ function getRowClass(data: any) {
 
 
 function getIconByNodeType(type: NodeType) {
-    console.log(type);
     switch (type) {
         case 'node': return h(NodeTypeIconNode, { size: 16, color: "#f0ad4e" });
         case 'transform': return h(NodeTypeIconTransform, { size: 16, color: "#f0ad4e" });
@@ -254,34 +252,16 @@ function renderNode(h, { node, data }) {
                             <ElInput :prefix-icon="Filter" v-model="filterText" placeholder="输入节点名称" />
                             <ElButton>展开</ElButton>
                         </div>
-                        <ElTree ref="treeRef" style="width: 100%;" :data="nodeTreeData" :props="defaultProps"
-                            :show-checkbox="false" :check-strictly="true" :indent="18" :highlight-current="true"
-                            :defaultExpandAll="false" :check-on-click-node="false" :check-on-click-leaf="false"
-                            :auto-expand-parent="false" :draggable="true" node-key="uuid" @node-click="handleNodeClick"
-                            :allow-drop="allowDropCheck" :allowDrag="allowDragCheck" @node-expand="onHandleNodeExpand"
-                            @node-collapse="onHandleNodeCollapse" @node-drop="onHandleNodeDrop"
-                            :default-expanded-keys="expandNodes" :filter-node-method="filterNode"
-                            empty-text="等待Creator客户端连接" :expand-on-click-node="false" :render-content="renderNode">
-
-                            <template #default="{ node, data }">
-                                <div v-on:mouseenter="onMouseOverTreeItem(data)" style="display: flex; align-items: center; width: 100%;">
-                                    <component :is="getIconByNodeType(data.type)" style="margin-right: 5px;" />
-                                    <!-- <ElCheckbox v-model="data.active" @click.stop @change="onHandleNodeCheckedChange($event, data)"
-                                :class="data.activeInHierarchy ? 'checkbox-active' : 'checkbox-inactive'" /> -->
-                                    <span :style="{ color: !data.activeInHierarchy ? 'gray' : 'white' }">
-                                        {{ node.label }}
-                                    </span>
-                                </div>
-                            </template>
-                        </ElTree>
+<TestTree></TestTree>
                     </ElSplitterPanel>
                     <ElSplitterPanel style="display: flex; flex-direction: column;">
                         <ViewerPropCollapse style="display: flex; flex-direction: column;"
                             :items="trackPropGroupDatas" />
+                            <!-- <TestTree></TestTree> -->
                     </ElSplitterPanel>
                 </ElSplitter>
             </ElMain>
-            <ElFooter></ElFooter>
+            <ElFooter height="35px"></ElFooter>
         </ElContainer>
     </div>
 </template>

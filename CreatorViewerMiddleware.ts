@@ -89,7 +89,6 @@ export function onChildAdd(parentUuid: string, nodeInfo: INodeInfo) {
 export function onAttrsTrack(groups: ICCObjectPropGroup[]) {
     trackPropGroupDatas.value.length = 0;
     trackersMap.clear();
-    const activeNames : string[] = [];
     propCollapseActiveNames.value.length = 0;
     groups.forEach(prop => {
         if(prop.type == 'node') {
