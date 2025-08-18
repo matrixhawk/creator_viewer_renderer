@@ -48,7 +48,7 @@ export function getIconByNodeType(type: NodeType) {
         case 'toggle_group': return h(NodeTypeIconToggleGroup, { size: 20, color: "#55c4f1" });
         case 'mask': return h(NodeTypeIconMask, { size: 20, color: "#55c4f1" });
         case 'button': return h(NodeTypeIconButton, { size: 18, color: "#bf9ee2" });
-        case 'graphics': return h(NodeTypeIconGraphics, { size: 18, color: "#55c4f1" });
+        case 'graphics': return h(NodeTypeIconGraphics, { size: 18, color: "#00a897" });
         case 'scene': return h(NodeTypeIconScene, { size: 16, color: "#f0ad4e" });
         case 'scroll_view': return h(NodeTypeIconScrollView, { size: 18, color: "#34d399" });
         case 'progress_bar': return h(NodeTypeIconProgress, { size: 18, color: "#34d399" });

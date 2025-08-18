@@ -1,10 +1,16 @@
 <template>
     <div style="display: flex; flex-direction: column; row-gap: 3px;">
         <div style="display: flex; height: 25px; padding-top: 2px; padding-left: 2px; column-gap: 1px;">
-             <div :style="{ width: `${titleVisibleWidth}px`, backgroundColor : '#383838' , display : 'flex', alignItems : 'center', justifyContent : 'center'}">
+            <div
+                :style="{ width: `${titleVisibleWidth}px`, backgroundColor: '#383838', display: 'flex', alignItems: 'center', justifyContent: 'center' }">
                 <IconEyeOpen color="#FFFFFF" size="14" :open="true"></IconEyeOpen>
-             </div>
-             <div :style="{ backgroundColor : '#383838', flex : 1, fontSize:'14px' , display : 'flex', alignItems : 'center', paddingLeft : '5px'}">节点信息</div>
+            </div>
+            <div
+                :style="{ backgroundColor: '#383838', flex: 1, fontSize: '14px', display: 'flex', alignItems: 'center', paddingLeft: '5px' }">
+                <span style="width: 100px;">节点信息</span>
+                    <ElInput style="height: 25px;" flex="1" :prefix-icon="Filter" v-model="filterText" placeholder="输入节点名称" />
+                    <ElButton>展开</ElButton>
+            </div>
         </div>
         <div class="custom-tree">
             <ElTree :render-content="renderContent" ref="treeRef" style="width: 100%;" :data="nodeTreeData"
@@ -20,13 +26,14 @@
 
 <script lang="ts" setup>
 import { ElTree } from 'element-plus';
-import { nextTick, ref, VNode } from 'vue';
-
+import { nextTick, onBeforeUnmount, onMounted, ref, VNode, h, watch } from 'vue';
+import { Filter } from '@element-plus/icons-vue';
 import type { FilterNodeMethodFunction, RenderContentFunction } from 'element-plus';
 
 import IconEyeOpen from './components/property/custom-icons/icon-eye-open.vue';
 import { ClientBridge, nodeTreeData, refreshNodeActiveStatus, treeRef } from './CreatorViewerMiddleware';
 import { getIconByNodeType } from './Utils';
+import { eventBus } from './EventBus';
 
 const expandNodes = ref<string[]>([]);
 const titleVisibleWidth = ref(25);
@@ -36,6 +43,12 @@ const defaultProps = {
     label: 'name',
     class: getRowClass
 }
+
+const filterText = ref('')
+
+watch(filterText, (val) => {
+    treeRef.value!.filter(val)
+})
 
 function onHandleNodeExpand(nodeInfo: INodeInfo) {
     console.log(`on node expand change`, nodeInfo);
@@ -98,11 +111,63 @@ function onMouseLeaveTreeItem(data) {
 }
 
 const handleNodeClick = (data) => {
-	console.log(`on handle node click`, data);
+    console.log(`on handle node click`, data);
     ClientBridge.selectNode(data.uuid);
 }
 
-const renderContent: RenderContentFunction = (h, { node, data, store }) => {
+onMounted(async () => {
+    eventBus.on('highlight-node', handleHighlight);
+    eventBus.on('select-node', handleSelectNode);
+})
+
+onBeforeUnmount(() => {
+    eventBus.off('highlight-node', handleHighlight);
+    eventBus.off('select-node', handleSelectNode);
+})
+
+const highlightTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+function handleHighlight(nodeId: string) {
+    flashHighlight(nodeId);
+}
+
+function handleSelectNode(nodeId: string) {
+    flashHighlight(nodeId);
+    treeRef.value.getNode(nodeId)?.expand(null, true);
+    treeRef.value.setCurrentKey(nodeId);
+    ClientBridge.selectNode(nodeId);
+}
+
+function flashHighlight(nodeId: string, duration = 600) {
+    const node = treeRef.value.getNode(nodeId);
+    if (!node) return
+    console.log(`flashHighlight ${nodeId} `);
+    const data = node.data
+    data.highlight = true
+    treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
+
+    const nodeDom = treeRef.value.$el.querySelector(`.el-tree-node[data-key="${nodeId}"]`) as HTMLElement;
+    if (nodeDom) {
+        nodeDom.scrollIntoView({ behavior: 'auto', block: 'center' })
+    }
+
+    // 如果之前有高亮定时器，先清除
+    if (highlightTimers.has(nodeId)) {
+        clearTimeout(highlightTimers.get(nodeId))
+    }
+
+    // 设置新的定时器
+    const timer = setTimeout(() => {
+        data.highlight = false
+        treeRef.value.updateKeyChildren(nodeId, node.childNodes.map(n => n.data))
+        highlightTimers.delete(nodeId)
+    }, duration)
+
+    highlightTimers.set(nodeId, timer)
+}
+
+//@ts-ignore
+const renderContent: RenderContentFunction = (_, { node, data, store }: { node, data: INodeInfo, store }) => {
     return [h(
         'div',
         {
@@ -128,20 +193,30 @@ const renderContent: RenderContentFunction = (h, { node, data, store }) => {
                     class: 'eye-content-node',
                 },
                 [
-                    h(IconEyeOpen, {
-                        class: 'icon',
-                        size: '14',
-                        color: "#ffffff",
-                        open: data.active,
+                    h('div', {
                         style: {
-                            opacity: data.hover || !data.active || node.isCurrent ? 0.6 : 0,
-                            paddingLeft: 5
-                        },
-                        onClick() {
-                            data.active = !data.active;
-                            onHandleNodeCheckedChange(data.active, data);
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: `${titleVisibleWidth.value}px`
                         }
-                    }),
+                    }, [
+                        h(IconEyeOpen, {
+                            class: 'icon',
+                            size: '14',
+                            color: "#ffffff",
+                            open: data.active,
+                            style: {
+                                //@ts-ignore
+                                opacity: data.hover || !data.active || node.isCurrent ? 0.6 : 0,
+                                paddingLeft: 5
+                            },
+                            onClick() {
+                                data.active = !data.active;
+                                onHandleNodeCheckedChange(data.active, data as INodeInfo);
+                            }
+                        }),
+                    ])
                 ]
             ),
             h('div', {
@@ -180,8 +255,23 @@ const renderContent: RenderContentFunction = (h, { node, data, store }) => {
                     }),
                 ])
             ]),
-            h(getIconByNodeType(data.type), { style: 'margin-right:5px' }),
-            h('span', null, node.label || (data.type == "scene" ? "Unnamed Scene" : "")),
+            h('div', {
+                style: {
+                    marginRight: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "18px",
+                    opacity: data.activeInHierarchy ? 1 : 0.5,
+                }
+            }, [
+                h(getIconByNodeType(data.type)),
+            ]),
+            h('span', {
+                style: {
+                    opacity: data.activeInHierarchy ? 1 : 0.5,
+                }
+            }, node.label || (data.type == "scene" ? "Unnamed Scene" : "")),
         ]
     )
     ]
@@ -194,7 +284,7 @@ const renderContent: RenderContentFunction = (h, { node, data, store }) => {
     display: flex;
     align-items: center;
     font-size: 14px;
-	height: 23px;
+    height: 23px;
     gap: 3px;
 }
 
@@ -216,23 +306,26 @@ const renderContent: RenderContentFunction = (h, { node, data, store }) => {
 }
 
 .el-tree {
-  position: relative; /* 给容器定位 */
+    position: relative;
+    /* 给容器定位 */
 }
 
 /* 在 .el-tree 下面插入一个伪元素当背景层 */
 .el-tree::before {
-  content: '';
-  position: absolute;
-  inset: 0; /* 铺满整个容器 */
-  z-index: -10;
-  pointer-events: none; /* 不挡鼠标事件 */
-  background: repeating-linear-gradient(
-    to bottom,
-    #0000 0,          /* 黑 */
-    #0000 20px,       /* 行高：26px，你根据实际行高调整 */
-    #ffffff0A 20px,       /* 白 */
-    #ffffff0A 40px
-  );
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* 铺满整个容器 */
+    z-index: -10;
+    pointer-events: none;
+    /* 不挡鼠标事件 */
+    background: repeating-linear-gradient(to bottom,
+            #0000 0,
+            /* 黑 */
+            #0000 20px,
+            /* 行高：26px，你根据实际行高调整 */
+            #ffffff0A 20px,
+            /* 白 */
+            #ffffff0A 40px);
 }
-
 </style>
