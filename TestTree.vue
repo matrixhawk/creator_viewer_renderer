@@ -316,7 +316,7 @@ const renderContent: RenderContentFunction = (_, { node, data, store }: { node, 
     position: absolute;
     inset: 0;
     /* 铺满整个容器 */
-    z-index: -10;
+    z-index: 1;
     pointer-events: none;
     /* 不挡鼠标事件 */
     background: repeating-linear-gradient(to bottom,
@@ -324,8 +324,8 @@ const renderContent: RenderContentFunction = (_, { node, data, store }: { node, 
             /* 黑 */
             #0000 20px,
             /* 行高：26px，你根据实际行高调整 */
-            #ffffff0A 20px,
+            #ffffff06 20px,
             /* 白 */
-            #ffffff0A 40px);
+            #ffffff06 40px);
 }
 </style>
