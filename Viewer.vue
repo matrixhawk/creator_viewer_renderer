@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { ElButton, ElContainer, ElFooter, ElHeader, ElInput, ElMain, ElSplitter, ElSplitterPanel, ElTabPane, ElTabs, ElText } from 'element-plus';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, provide, ref, watch } from 'vue';
 import ViewerPropCollapse from './components/property/ViewerPropCollapse.vue';
 import { trackPropGroupDatas, treeRef, viewerChannel } from './CreatorViewerMiddleware';
 import TestTree from './TestTree.vue';
+import IconEyeOpen from './components/property/custom-icons/icon-eye-open.vue';
+import IconFilter from './components/property/custom-icons/icon-filter.vue';
+import IconPinia from './components/property/custom-icons/icon-pinia.vue';
 
 const expandNodes = ref<string[]>([]);
+
+const treeFilterText = ref("");
+
+provide('treeFilterText', treeFilterText);
 
 const listeningPort = ref("等待监听端口...");
 onMounted(async () => {
@@ -46,24 +53,51 @@ function onClickExpandAll() {
                     <ElButton @click="onClickExpandAll">{{ expandAll ? "展开" : "收起" }}</ElButton>
                 </div>
             </ElHeader> -->
-            <ElMain
-                style=" display: flex; padding: 0px 0px 0px 0px;border-bottom: 1px solid rgb(121, 121, 121);">
-                <ElTabs tab-position="top" type="border-card"  class="demo-tabs" >
-                    <ElTabPane>
+            <ElMain style=" display: flex; padding: 0px 0px 0px 0px;border-bottom: 1px solid rgb(121, 121, 121);">
+                <ElTabs tab-position="top" type="border-card" class="demo-tabs" style="width: 100%;">
+                    <ElTabPane style="display: flex; flex-direction: column;">
                         <template #label>
+                            <IconPinia ></IconPinia>
                             <span class="custom-tabs-label">
-                            <span>Tree</span>
+                                
+                                <span>节点树</span>
                             </span>
                         </template>
+                        <div style="display: flex; height: 30px; padding-top: 2px; padding-left: 2px; column-gap: 1px;">
+                            <div
+                                :style="{ width: `${26}px`, backgroundColor: '#383838', display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+                                <IconEyeOpen color="#FFFFFF" size="14" :open="true"></IconEyeOpen>
+                            </div>
+                            <div
+                                :style="{ backgroundColor: '#383838', flex: 1, fontSize: '14px', display: 'flex', alignItems: 'center', paddingLeft: '5px' }">
+                                <span style="width: 100px;">节点信息</span>
+                                <ElInput style="height: 25px;" flex="1" :prefix-icon="IconFilter"
+                                    v-model="treeFilterText" placeholder="输入节点名称" />
+                                <ElButton>展开</ElButton>
+                            </div>
+                        </div>
                         <ElSplitter layout="vertical">
                             <ElSplitterPanel>
                                 <TestTree></TestTree>
                             </ElSplitterPanel>
                             <ElSplitterPanel>
-                                <ViewerPropCollapse 
-                                    :items="trackPropGroupDatas" />
+                                <ViewerPropCollapse :items="trackPropGroupDatas" />
                             </ElSplitterPanel>
                         </ElSplitter>
+                    </ElTabPane>
+                                        <ElTabPane style="display: flex; flex-direction: column;">
+                        <template #label>
+                            <span class="custom-tabs-label">
+                                <span>日志面板</span>
+                            </span>
+                        </template>
+                    </ElTabPane>
+                    <ElTabPane style="display: flex; flex-direction: column;">
+                        <template #label>
+                            <span class="custom-tabs-label">
+                                <span>存储</span>
+                            </span>
+                        </template>
                     </ElTabPane>
                 </ElTabs>
             </ElMain>
@@ -73,11 +107,10 @@ function onClickExpandAll() {
 </template>
 
 <style>
-
 .el-tabs {
     margin-top: 3px;
     display: flex;
-    --el-tabs-header-height : 30px;
+    --el-tabs-header-height: 30px;
 }
 
 .demo-tabs .el-tab-pane {

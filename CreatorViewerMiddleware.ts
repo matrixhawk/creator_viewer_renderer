@@ -91,6 +91,9 @@ export function onAttrsTrack(groups: ICCObjectPropGroup[]) {
     trackersMap.clear();
     propCollapseActiveNames.value.length = 0;
     groups.forEach(prop => {
+        prop.props.forEach(propObj => {
+            trackersMap.set(prop.uuid + propObj.key, ref(propObj.value));
+        })
         if(prop.type == 'node') {
             trackedNodeUuid = prop.uuid;
                 const node = treeRef.value.getNode(prop.uuid);
@@ -100,9 +103,7 @@ export function onAttrsTrack(groups: ICCObjectPropGroup[]) {
         }
 
         propCollapseActiveNames.value.push(prop.uuid);
-        prop.props.forEach(propObj => {
-            trackersMap.set(prop.uuid + propObj.key, ref(propObj.value));
-        })
+
     })
 
     nextTick(() => {

@@ -8,6 +8,9 @@ const props = defineProps<{  modelValue: number, uuid: string, propName: string 
 
 const tracker = trackersMap.get(props.uuid + props.propName) as Ref<number>;
 
+if(!tracker) {
+console.log(`undefined tracker `, props.propName);
+}
 watch(tracker,()=>{
     internalValue.value = tracker.value;
 })

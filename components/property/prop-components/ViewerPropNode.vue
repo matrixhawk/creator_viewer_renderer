@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ElButton, ElIcon } from 'element-plus';
-import { h, reactive, Ref, watch } from 'vue';
+import { ElButton } from 'element-plus';
+import { reactive, Ref, watch } from 'vue';
 import { trackersMap, treeRef } from '../../../CreatorViewerMiddleware';
-import { Link } from '@element-plus/icons-vue'
 import { eventBus } from '../../../EventBus';
-import IconPackage from '../custom-icons/icon-package.vue';
 import IconLink from '../custom-icons/icon-link.vue';
+import IconPackage from '../custom-icons/icon-package.vue';
 import IconUnlink from '../custom-icons/icon-unlink.vue';
 
 

@@ -1,17 +1,5 @@
 <template>
     <div style="display: flex; flex-direction: column; row-gap: 3px;">
-        <div style="display: flex; height: 25px; padding-top: 2px; padding-left: 2px; column-gap: 1px;">
-            <div
-                :style="{ width: `${titleVisibleWidth}px`, backgroundColor: '#383838', display: 'flex', alignItems: 'center', justifyContent: 'center' }">
-                <IconEyeOpen color="#FFFFFF" size="14" :open="true"></IconEyeOpen>
-            </div>
-            <div
-                :style="{ backgroundColor: '#383838', flex: 1, fontSize: '14px', display: 'flex', alignItems: 'center', paddingLeft: '5px' }">
-                <span style="width: 100px;">节点信息</span>
-                    <ElInput style="height: 25px;" flex="1" :prefix-icon="Filter" v-model="filterText" placeholder="输入节点名称" />
-                    <ElButton>展开</ElButton>
-            </div>
-        </div>
         <div class="custom-tree">
             <ElTree :render-content="renderContent" ref="treeRef" style="width: 100%;" :data="nodeTreeData"
                 :props="defaultProps" :show-checkbox="false" :check-strictly="true" :indent="18"
@@ -25,18 +13,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ElTree } from 'element-plus';
-import { nextTick, onBeforeUnmount, onMounted, ref, VNode, h, watch } from 'vue';
-import { Filter } from '@element-plus/icons-vue';
 import type { FilterNodeMethodFunction, RenderContentFunction } from 'element-plus';
+import { ElTree } from 'element-plus';
+import { h, inject, nextTick, onBeforeUnmount, onMounted, ref, VNode, watch } from 'vue';
 
 import IconEyeOpen from './components/property/custom-icons/icon-eye-open.vue';
 import { ClientBridge, nodeTreeData, refreshNodeActiveStatus, treeRef } from './CreatorViewerMiddleware';
-import { getIconByNodeType } from './Utils';
 import { eventBus } from './EventBus';
+import { getIconByNodeType } from './Utils';
 
 const expandNodes = ref<string[]>([]);
 const titleVisibleWidth = ref(25);
+const treeFilterText = inject('treeFilterText', ref(""));
 
 const defaultProps = {
     children: 'children',
@@ -44,9 +32,7 @@ const defaultProps = {
     class: getRowClass
 }
 
-const filterText = ref('')
-
-watch(filterText, (val) => {
+watch(treeFilterText, (val) => {
     treeRef.value!.filter(val)
 })
 
@@ -211,11 +197,24 @@ const renderContent: RenderContentFunction = (_, { node, data, store }: { node, 
                                 opacity: data.hover || !data.active || node.isCurrent ? 0.6 : 0,
                                 paddingLeft: 5
                             },
-                            onClick() {
+                            onClick(e: MouseEvent) {
+                                e.stopPropagation();
                                 data.active = !data.active;
                                 onHandleNodeCheckedChange(data.active, data as INodeInfo);
                             }
                         }),
+                        // h(TreeNodeMenu, {
+                        //     style: {
+                        //         //@ts-ignore
+                        //         opacity: data.hover ? 1 : 0,
+                        //         right : 0,
+                        //         position : "absolute"
+                        //     },
+                        //     // onClick() {
+                        //     //     data.active = !data.active;
+                        //     //     onHandleNodeCheckedChange(data.active, data as INodeInfo);
+                        //     // }
+                        // }),                        
                     ])
                 ]
             ),
@@ -230,6 +229,7 @@ const renderContent: RenderContentFunction = (_, { node, data, store }: { node, 
                 },
                 style: { pointerEvents: 'auto', transition: 'transform 0.3s ease', display: 'flex', width: '16px', height: '16px' },
                 onClick: (e: MouseEvent) => {
+                    e.stopPropagation();
                     node.expanded = !node.expanded;
                     if (node.expanded) {
                         onHandleNodeExpand(data as INodeInfo);

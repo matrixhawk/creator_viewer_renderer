@@ -27,10 +27,22 @@ provide('propResizing', propResizing);
 
 <style>
 
+.el-collapse {
+    --el-collapse-header-height : 28px;
+}
+
+.el-collapse-item__title {
+    height: 28px;
+}
+
 .el-collapse-item__header {
-    background-color: rgb(77,77,77) !important;
-    height: 35px;
+    background-color: rgba(212, 212, 212, 0.253) !important;
     box-sizing: border-box;
+    
+}
+
+.el-collapse-item__content {
+    padding-bottom: 0px;
 }
 
 </style>
