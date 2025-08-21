@@ -11,6 +11,7 @@ export const unExpandNodes = ref<string[]>([]);
 export const trackPropGroupDatas = ref<ICCObjectPropGroup[]>([]);
 export const trackersMap: Map<string, Ref<any>> = new Map();
 export const isTrackedNodeActive = ref(true);
+export const clientStorageDatas = ref([]);
 
 export const viewerChannel = new ViewerChannel();
 viewerChannel.setMessageHandler(messageHandler, onClientDisconnect);
@@ -140,6 +141,10 @@ export class ClientBridge {
     static printTargetByUuid(targetUuid: string) {
         viewerChannel.send({ type: 'print_target_by_uuid', data: { targetUuid : targetUuid } })
     }
+
+    static pullClientStorage() {
+        viewerChannel.send({ type: 'pull_client_storage', data: {} })
+    }
 }
 
 type MessageHandler = () => void
@@ -206,6 +211,12 @@ function messageHandler(messageData : C2S_CreatorViewerMessage) {
         case "on_node_selected_by_viewer": {
             eventBus.emit('select-node', messageData.data.targetUuid);
         }
+        break;
+        case "on_client_storage_datas" : {
+            clientStorageDatas.value.length = 0;
+            clientStorageDatas.value.push(...messageData.data);
+        }
+        break;
     }
 }
 

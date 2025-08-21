@@ -7,6 +7,7 @@ import TestTree from './TestTree.vue';
 import IconEyeOpen from './components/property/custom-icons/icon-eye-open.vue';
 import IconFilter from './components/property/custom-icons/icon-filter.vue';
 import IconPinia from './components/property/custom-icons/icon-pinia.vue';
+import StoragePanel from './panels/StoragePanel.vue';
 
 const expandNodes = ref<string[]>([]);
 
@@ -98,6 +99,7 @@ function onClickExpandAll() {
                                 <span>存储</span>
                             </span>
                         </template>
+                        <StoragePanel></StoragePanel>
                     </ElTabPane>
                 </ElTabs>
             </ElMain>

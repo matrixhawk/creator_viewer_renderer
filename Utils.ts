@@ -24,6 +24,7 @@ import NodeTypeIconTransform from './components/property/custom-icons/tree_nodes
 import NodeTypeIconVideoPlayer from './components/property/custom-icons/tree_nodes/node-type-icon-video-player.vue';
 import NodeTypeIconWebView from './components/property/custom-icons/tree_nodes/node-type-icon-web-view.vue';
 import NodeTypeIconWidget from './components/property/custom-icons/tree_nodes/node-type-icon-widget.vue';
+import NodeTypeIconComponent from "./components/property/custom-icons/tree_nodes/node-type-icon-component.vue";
 
 export function getIconByNodeType(type: NodeType) {
     switch (type) {
@@ -52,6 +53,7 @@ export function getIconByNodeType(type: NodeType) {
         case 'scene': return h(NodeTypeIconScene, { size: 16, color: "#f0ad4e" });
         case 'scroll_view': return h(NodeTypeIconScrollView, { size: 18, color: "#34d399" });
         case 'progress_bar': return h(NodeTypeIconProgress, { size: 18, color: "#34d399" });
+        case "component": return h(NodeTypeIconComponent, { size: 18, color: "#409eff" });;
     }
 
     return h(NodeTypeIconImage, { size: 16, color: "#f286c4" });
