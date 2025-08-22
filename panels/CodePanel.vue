@@ -15,6 +15,8 @@
 import { ref } from 'vue';
 import CodeEditor from './code-editor/CodeEditor.vue';
 import { ClientBridge } from '../CreatorViewerMiddleware';
+import './code-editor/themes-base16.css'
+import './code-editor/themes.css'
 
 const editor = ref(null);
 
