@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; flex-direction: column; height: 100%; row-gap: 5px;">
+    <div style="display: flex; flex-direction: column; height: 100%; row-gap: 5px; width: 100%;">
         <div style="height: 25px; display: flex; flex-direction: row-reverse; column-gap: 10px;padding-right: 10px;">
 
             <ElButton type="success" style="height: 25px;">
@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { createJSONEditor, JsonEditor } from 'vanilla-jsoneditor';
+import { createJSONEditor, JsonEditor, Mode } from 'vanilla-jsoneditor';
 import { onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
 import { ClientBridge, clientStorageDatas } from '../CreatorViewerMiddleware';
 
@@ -22,7 +22,8 @@ watch(clientStorageDatas,()=>{
     editor.updateProps({
         content : {
             json : clientStorageDatas.value
-        }
+        },
+        mode : Mode.table
     })
 }, { deep : true})
 
@@ -147,6 +148,7 @@ function onClickPullStorage() {
 <style>
 .vue-jsoneditor {
     flex: 1;
+    width: 100%;
     --jse-theme-color: #757575;
     --jse-theme-color-highlight: #467cd2;
     --jse-background-color: #1e1e1e;

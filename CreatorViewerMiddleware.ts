@@ -145,6 +145,10 @@ export class ClientBridge {
     static pullClientStorage() {
         viewerChannel.send({ type: 'pull_client_storage', data: {} })
     }
+
+    static executeCode(code : string) {
+        viewerChannel.send({ type: 'exec_code', data: code });
+    }
 }
 
 type MessageHandler = () => void

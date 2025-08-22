@@ -8,6 +8,11 @@ import IconEyeOpen from './components/property/custom-icons/icon-eye-open.vue';
 import IconFilter from './components/property/custom-icons/icon-filter.vue';
 import IconPinia from './components/property/custom-icons/icon-pinia.vue';
 import StoragePanel from './panels/StoragePanel.vue';
+import CodePanel from './panels/CodePanel.vue';
+import IconFile from './components/property/custom-icons/icon-file.vue';
+import IconDatabase from './components/property/custom-icons/icon-database.vue';
+import IconCodeBox from './components/property/custom-icons/icon-code-box.vue';
+import LogPanel from './panels/LogPanel.vue';
 
 const expandNodes = ref<string[]>([]);
 
@@ -58,9 +63,8 @@ function onClickExpandAll() {
                 <ElTabs tab-position="top" type="border-card" class="demo-tabs" style="width: 100%;">
                     <ElTabPane style="display: flex; flex-direction: column;">
                         <template #label>
-                            <IconPinia ></IconPinia>
+                            <IconPinia size="16"></IconPinia>
                             <span class="custom-tabs-label">
-                                
                                 <span>节点树</span>
                             </span>
                         </template>
@@ -86,20 +90,32 @@ function onClickExpandAll() {
                             </ElSplitterPanel>
                         </ElSplitter>
                     </ElTabPane>
-                                        <ElTabPane style="display: flex; flex-direction: column;">
+                    <ElTabPane style="display: flex; flex-direction: column;">
                         <template #label>
+                            <IconFile size="16"></IconFile>
                             <span class="custom-tabs-label">
                                 <span>日志面板</span>
                             </span>
                         </template>
+                        <LogPanel></LogPanel>
                     </ElTabPane>
                     <ElTabPane style="display: flex; flex-direction: column;">
                         <template #label>
+                            <IconDatabase size="16"></IconDatabase>
                             <span class="custom-tabs-label">
                                 <span>存储</span>
                             </span>
                         </template>
                         <StoragePanel></StoragePanel>
+                    </ElTabPane>
+                    <ElTabPane style="display: flex; flex-direction: column;">
+                        <template #label>
+                            <IconCodeBox size="16"></IconCodeBox>
+                            <span class="custom-tabs-label">
+                                <span>Editor</span>
+                            </span>
+                        </template>
+                        <CodePanel></CodePanel>
                     </ElTabPane>
                 </ElTabs>
             </ElMain>
@@ -121,6 +137,10 @@ function onClickExpandAll() {
 
 .demo-tabs .el-tabs__content {
     padding: 3px;
+}
+
+.custom-tabs-label span {
+    font-size: 13px;
 }
 
 /* .demo-tabs .custom-tabs-label .el-icon {
